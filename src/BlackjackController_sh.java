@@ -4,7 +4,7 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.util.*;
 
-public class BlackjackController extends JFrame{
+public class BlackjackController_sh extends JFrame{
 	private Dealer dealer;
 	private HumanPlayer[] hand_player;
 	private ComputerPlayer hand_dealer;
@@ -17,9 +17,7 @@ public class BlackjackController extends JFrame{
 	private PlayerGUI gui_dealer;
 	private PlayerGUI[] gui_player = new PlayerGUI[3];
 	
-	public BlackjackController(Dealer d) {
-
-		mainScreen();
+	public BlackjackController_sh(Dealer d) {
 		dealer = d;
 		// 플레이어 수 받아옴.
 		player_num = Integer.parseInt(JOptionPane.showInputDialog("How mamy user?"));
@@ -30,7 +28,6 @@ public class BlackjackController extends JFrame{
 		// 플레이어의 이름을 각각 받음.
 		for(int i = 0; i < player_num; i++) {
 			name[i] = JOptionPane.showInputDialog("What's your name Player_"+(i+1) +" ?");
-
 			if (i == 0){
 				gui_player[i] = new PlayerLeftGUI(name[i]);
 			}
@@ -40,19 +37,33 @@ public class BlackjackController extends JFrame{
 			else if (i == 2){
 				gui_player[i] = new PlayerRightGUI(name[i]);
 			}
+
 			hand_player[i] = new HumanPlayer(8, name[i], gui_player[i]);
-			add(gui_player[i]);
 		}
 		hand_dealer = new ComputerPlayer(8, gui_dealer);
 		
 		//GUI setting
+		mainScreen();
 		ImageIcon background = new ImageIcon("image/background/casino_table_4k.jpg");
 		backPanel = new JPanel();
-		backPanel.setBounds(0,0,1000,600);
+		backPanel.setBounds(0,0,1000,800);
 		backPanel.setLayout(null);
 		
 		JLabel backLabel = new JLabel(background);
 		backLabel.setBounds(0,0, 1000, 600);
+		if (player_num == 1){
+			add(gui_player[1]);
+		}
+		else if (player_num == 2){
+			add(gui_player[0]);
+			add(gui_player[1]);
+		}
+		else if (player_num == 3){
+			add(gui_player[0]);
+			add(gui_player[1]);
+			add(gui_player[2]);
+		}
+
 		add(gui_dealer);
 		backPanel.add(backLabel);
 		add(backPanel);
@@ -84,21 +95,19 @@ public class BlackjackController extends JFrame{
 						hand_player[i].setState(0);
 					else {
 						dealer.dealTo(hand_player[i]);
+
+						dealer.dealTo(hand_dealer);
+
+						int player_score = hand_player[i].totalScore();
+						int dealer_score = hand_dealer.totalScore();
+
+						if(player_score<=21 && (dealer_score>21 || player_score>dealer_score)) hand_player[i].setState(1);
+						else if(player_score<dealer_score || player_score>21) hand_player[i].setState(2);
+						else hand_player[i].setState(3);
 					}
 				}
 			}
-			dealer.dealTo(hand_dealer);
-
-			for(int i=0; i<player_num; ++i){
-				if(hand_player[i]!=null){
-					int player_score = hand_player[i].totalScore();
-					int dealer_score = hand_dealer.totalScore();
-
-					if(player_score<=21 && (dealer_score>21 || player_score>dealer_score)) hand_player[i].setState(1);
-					else if(player_score<dealer_score || player_score>21) hand_player[i].setState(2);
-					else hand_player[i].setState(3);
-				}
-			}
+			
 			gui_dealer.revealCardImg(0);
 			for(int i = 0; i < player_num; i++) {
 				if(hand_player[i] != null) {
@@ -161,4 +170,33 @@ public class BlackjackController extends JFrame{
     	img = img.getScaledInstance(60, 90, Image.SCALE_SMOOTH);
     	return new ImageIcon(img);
     }
+    
+    public void cardMove(JComponent comp, int x2, int y2) {
+    	try {
+    		double distance = Math.sqrt(Math.pow(x2-comp.getX(),2)+Math.pow(y2-comp.getY(),2));
+    		double sinX = (y2-comp.getY())/distance;
+    		double cosX = (x2-comp.getX())/distance;
+    		double x = comp.getX();
+    		double y = comp.getY();
+    		long beforeTime = System.currentTimeMillis();
+    		
+    		while(true) {
+        		Thread.sleep(17);
+        		if(System.currentTimeMillis()-beforeTime>=10/2.75*distance) {
+        			comp.setLocation(x2, y2);
+        			break;
+        		}
+        		else {
+        			x+=5*cosX;
+        			y+=5*sinX;
+        		}
+        		comp.setLocation((int)x, (int)y);
+        		repaint();
+    		}
+    	}
+    	catch (Exception e){
+    		System.out.println("error");
+    	}
+    }
+
 }
