@@ -19,29 +19,25 @@ public class HumanPlayer extends CardPlayer {
         chips = 0;
         name = n;
     }
-    public String yourName() { return name;}
+    public String getName() { return name;}
 
     public boolean wantsACard() {
     	if(totalScore()>21) return false;
-        String response = JOptionPane.showInputDialog("한장 더 드릴까요? (Y/N)");
-        return response.equals("Y")||response.equals("y");
+        int response = JOptionPane.showConfirmDialog(null, name+ "님, 한장 더 드릴까요?", "Do you want a Card?", JOptionPane.YES_NO_OPTION);
+        return response == JOptionPane.YES_OPTION;
     }
     public void youWinBlackjack(String name) {
-            JOptionPane.showMessageDialog(null, name +"님은"+"블랙잭으로 이겼습니다.");
-            chips+=2;
+        chips+=2;
     }
     public void youWin(String name) {
-            JOptionPane.showMessageDialog(null, name +"님은"+"이겼습니다.");
-            chips+=1;
+        chips+=1;
     }
     
     public void youLose(String name) {
-            JOptionPane.showMessageDialog(null, name +"님은"+" 졌습니다.");
-            chips-=1;
+        chips-=1;
     }
     
     public void youDraw(String name) {
-            JOptionPane.showMessageDialog(null, name +"님은"+"비겼습니다.");
     }
     
     public int Chips() { return chips; }

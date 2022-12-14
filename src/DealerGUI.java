@@ -12,12 +12,12 @@ public class DealerGUI extends PlayerGUI implements PlayerPanel{
 
 	@Override
 	public void initialize() {
-		setBounds(225, 100, 550, 150);
+		setBounds(225, 30, 550, 150);
 		getCardPanel().setBounds(0, 30, 550, 90);
-		getNameLabel().setBounds(0, 0, 50, 30);
+		getNameLabel().setBounds(0, 125, 300, 30);
 		getNameLabel().setForeground(Color.WHITE);
-		add(getNameLabel());
-		add(getCardPanel());
+		this.add(getNameLabel());
+		this.add(getCardPanel());
 	}
 
 	@Override

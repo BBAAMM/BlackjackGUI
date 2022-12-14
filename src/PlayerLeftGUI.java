@@ -10,8 +10,11 @@ public class PlayerLeftGUI extends PlayerGUI implements PlayerPanel{
     public void initialize() {
         setBounds(30, 25, 550, 550);
         getCardPanel().setBounds(0, 460, 550, 90);
-        getNameLabel().setBounds(300, 430, 50, 30);
+        getNameLabel().setBounds(200, 430, 200, 30);
         getNameLabel().setForeground(Color.WHITE);
+        getChipLabel().setForeground(Color.WHITE);
+        getChipLabel().setBounds(400, 430, 250, 30);
+        this.add(getChipLabel());
         this.add(getNameLabel());
         this.add(getCardPanel());
     }

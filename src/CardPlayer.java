@@ -75,10 +75,16 @@ public abstract class CardPlayer implements CardPlayerBehavior {
     	}
     	return score;
     }
+    public int getCard_count(){
+        return card_count;
+    }
     public void reset() {
     	for(int i=0; i<card_count; ++i) {
     		hand[i]=null;
     	}
     	card_count=0;
+    }
+    public PlayerGUI getGui(){
+        return gui;
     }
 }

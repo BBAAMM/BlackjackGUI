@@ -1,7 +1,6 @@
 import javax.swing.*;
 
-import java.awt.Dimension;
-import java.awt.Image;
+import java.awt.*;
 import java.util.*;
 
 public class BlackjackController extends JFrame{
@@ -16,40 +15,24 @@ public class BlackjackController extends JFrame{
 	private JPanel backPanel;
 	private PlayerGUI gui_dealer;
 	private PlayerGUI[] gui_player = new PlayerGUI[3];
-	
-	public BlackjackController(Dealer d) {
-
+	private JLabelVanishing finishLabel;
+	public BlackjackController(Dealer d, int _player_num) {
+		finishLabel = new JLabelVanishing("감사합니다", backPanel, true, 1);
 		mainScreen();
 		dealer = d;
 		// 플레이어 수 받아옴.
-		player_num = Integer.parseInt(JOptionPane.showInputDialog("How mamy user?"));
+		player_num = _player_num;
 		name = new String[player_num];
 		hand_player = new HumanPlayer[player_num];
 		gui_dealer = new DealerGUI();
-		
-		// 플레이어의 이름을 각각 받음.
-		for(int i = 0; i < player_num; i++) {
-			name[i] = JOptionPane.showInputDialog("What's your name Player_"+(i+1) +" ?");
 
-			if (i == 0){
-				gui_player[i] = new PlayerLeftGUI(name[i]);
-			}
-			else if (i == 1){
-				gui_player[i] = new PlayerMiddleGUI(name[i]);
-			}
-			else if (i == 2){
-				gui_player[i] = new PlayerRightGUI(name[i]);
-			}
-			hand_player[i] = new HumanPlayer(8, name[i], gui_player[i]);
-			add(gui_player[i]);
-		}
+		getPlayerNames();
 		hand_dealer = new ComputerPlayer(8, gui_dealer);
 		
 		//GUI setting
 		ImageIcon background = new ImageIcon("image/background/casino_table_4k.jpg");
-		backPanel = new JPanel();
+		backPanel = new JPanel(null);
 		backPanel.setBounds(0,0,1000,600);
-		backPanel.setLayout(null);
 		
 		JLabel backLabel = new JLabel(background);
 		backLabel.setBounds(0,0, 1000, 600);
@@ -57,19 +40,19 @@ public class BlackjackController extends JFrame{
 		backPanel.add(backLabel);
 		add(backPanel);
 		setVisible(true);
-		setResizable(false);
 	}
 	
 	public void manageBlackjack() {
-		
+
 		// play blackjack
 		while(true) {
-			if(cnt == player_num)
+			if(cnt == player_num){
 				break;
+			}
 
 			dealer.dealOneTo(hand_dealer);
 			dealer.dealOneTo(hand_dealer);
-			
+
 
 			for(int i = 0; i<player_num; i++) {
 				if(hand_player[i] != null) {
@@ -79,13 +62,7 @@ public class BlackjackController extends JFrame{
 			}
 
 			for(int i = 0; i < player_num; i++) {
-				if(hand_player[i] != null) {
-					if(hand_player[i].totalScore()==21)
-						hand_player[i].setState(0);
-					else {
-						dealer.dealTo(hand_player[i]);
-					}
-				}
+				dealer.dealTo(hand_player[i]);
 			}
 			dealer.dealTo(hand_dealer);
 
@@ -93,7 +70,7 @@ public class BlackjackController extends JFrame{
 				if(hand_player[i]!=null){
 					int player_score = hand_player[i].totalScore();
 					int dealer_score = hand_dealer.totalScore();
-
+					if(hand_player[i].getCard_count()==2 && player_score==21) hand_player[i].setState(0);
 					if(player_score<=21 && (dealer_score>21 || player_score>dealer_score)) hand_player[i].setState(1);
 					else if(player_score<dealer_score || player_score>21) hand_player[i].setState(2);
 					else hand_player[i].setState(3);
@@ -109,25 +86,42 @@ public class BlackjackController extends JFrame{
 				}
 			}
 
-			System.out.println("---------------------");
 			for(int i = 0; i < player_num; i++){
 				if(hand_player[i] != null) {
-					System.out.println(name[i]+"'s Chips : " + hand_player[i].Chips());
+					gui_player[i].setChipLabel(hand_player[i].Chips());
 				}
 			}
-			System.out.println("---------------------");
-
-			for(int i = 0; i < player_num; i++) {
-				if(hand_player[i] != null) {
-					hand_player[i].reset();
-					gui_player[i].reset();
-				}
-			}
-
-			hand_dealer.reset();
-			gui_dealer.reset();
 
 			oneMoreTime();
+		}
+		backPanel.removeAll();
+		getContentPane().removeAll();
+		repaint();
+		JLabelVanishing finishLabel = new JLabelVanishing("감사합니다", backPanel, true,1);
+		finishLabel.setFont(new InstallFont().boldFont(60f));
+		finishLabel.setHorizontalAlignment(JLabel.CENTER);
+		finishLabel.setBounds(300, 250, 400, 100);
+		backPanel.add(finishLabel);
+		add(backPanel);
+		new Thread(finishLabel).run();
+	}
+	public void getPlayerNames(){
+		// 플레이어의 이름을 각각 받음.
+		for(int i = 0; i < player_num; i++) {
+			name[i] = JOptionPane.showInputDialog((i+1) + "번째 사람의 이름을 입력해 주세요.");
+			if(name[i]==null) name[i]=Integer.toString(i+1);
+
+			if (i == 0){
+				gui_player[i] = new PlayerLeftGUI(name[i]);
+			}
+			else if (i == 1){
+				gui_player[i] = new PlayerMiddleGUI(name[i]);
+			}
+			else if (i == 2){
+				gui_player[i] = new PlayerRightGUI(name[i]);
+			}
+			hand_player[i] = new HumanPlayer(8, name[i], gui_player[i]);
+			add(gui_player[i]);
 		}
 	}
 
@@ -135,14 +129,25 @@ public class BlackjackController extends JFrame{
 		for(int i = 0; i < player_num; i++) {
 			if(hand_player[i] != null) {
 				int response = JOptionPane.showConfirmDialog(null, name[i] + "님 한 번 더 게임 하시겠습니까?");
-				
+
+
 				if(!(response==JOptionPane.OK_OPTION)) {
+					hand_player[i].reset();
+					gui_player[i].reset();
 					hand_player[i] = null;
 					name[i] = null;
 					cnt++;
 				}
 			}
 		}
+		for(int i = 0; i < player_num; i++) {
+			if(hand_player[i] != null) {
+				hand_player[i].reset();
+				gui_player[i].reset();
+			}
+		}
+		hand_dealer.reset();
+		gui_dealer.reset();
 	}
 	
 	public void mainScreen() {
@@ -152,13 +157,6 @@ public class BlackjackController extends JFrame{
 		setLayout(null);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setResizable(false);
 	}
-	
-    public ImageIcon getCardImage(String rank, String suit) {
-    	String card_path = "image/card_deck/" + rank + "_of_" + suit + ".png";
-    	ImageIcon icon = new ImageIcon(card_path);
-    	Image img = icon.getImage();
-    	img = img.getScaledInstance(60, 90, Image.SCALE_SMOOTH);
-    	return new ImageIcon(img);
-    }
 }

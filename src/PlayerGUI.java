@@ -1,4 +1,4 @@
-import java.awt.Image;
+import java.awt.*;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -10,18 +10,23 @@ public class PlayerGUI extends JPanel{
 	private ImageIcon preIcon;
 	private JLabel chipLabel;
 	private JPanel cardPanel;
+	private InstallFont fontFamily;
 	private int cardCnt = 0;
-	private int chips = 0;
+	private int chips = 10;
 	
 	public PlayerGUI(String _name) {
+		setLayout(null);
+		fontFamily = new InstallFont();
 		nameLabel = new JLabel(_name);
+		nameLabel.setFont(fontFamily.boldFont(20f));
 		cardLabels = new JLabel[8];
-		cardPanel = new JPanel();
-		chipLabel = new JLabel(Integer.toString(chips));
+		cardPanel = new JPanel(null);
+		chipLabel = new JLabel();
+		chipLabel.setFont(fontFamily.mediumFont(15f));
 		cardPanel.setOpaque(false);
 		setOpaque(false);
-		cardPanel.setLayout(null);
-		setLayout(null);
+
+		fontFamily=new InstallFont();
 	}
 	
 	public void putCardImg(ImageIcon _img) {
@@ -66,7 +71,11 @@ public class PlayerGUI extends JPanel{
     	repaint();
     	cardCnt=0;
     }
-	
+
+	public void setChipLabel(int _chip){
+		chipLabel.setText("Chips : " + Integer.toString(_chip));
+		repaint();
+	}
 	public JLabel getNameLabel() {
 		return nameLabel;
 	}
@@ -85,4 +94,5 @@ public class PlayerGUI extends JPanel{
 	public void plusCardCnt() {
 		++cardCnt;
 	}
+	public InstallFont getFontFamily(){return fontFamily;}
 }

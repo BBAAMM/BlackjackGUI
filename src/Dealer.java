@@ -22,4 +22,7 @@ public class Dealer {
             if(!p.receiveCard(c)) System.out.println("카드를 받지 못했습니다.");
         }
     }
+    public CardDeck getDeck(){
+        return deck;
+    }
 }
