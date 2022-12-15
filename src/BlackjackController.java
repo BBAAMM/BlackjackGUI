@@ -96,14 +96,13 @@ public class BlackjackController extends JFrame{
 		}
 		backPanel.removeAll();
 		getContentPane().removeAll();
-		repaint();
-		JLabelVanishing finishLabel = new JLabelVanishing("감사합니다", backPanel, true,1);
+		JLabelVanishing finishLabel = new JLabelVanishing("감사합니다", backPanel, true,2);
 		finishLabel.setFont(new InstallFont().boldFont(60f));
 		finishLabel.setHorizontalAlignment(JLabel.CENTER);
 		finishLabel.setBounds(300, 250, 400, 100);
 		backPanel.add(finishLabel);
 		add(backPanel);
-		new Thread(finishLabel).run();
+		new Thread(finishLabel).start();
 	}
 	public void getPlayerNames(){
 		// 플레이어의 이름을 각각 받음.
