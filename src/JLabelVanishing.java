@@ -30,6 +30,7 @@ public class JLabelVanishing extends JLabel implements Runnable {
             Color currentColor = getForeground();
             if(isAppear){
                 alpha=0;
+                setVisible(true);
                 while(alpha<255){
                     Thread.sleep(17);
                     alpha+=(float)255/60/speed;
@@ -39,6 +40,7 @@ public class JLabelVanishing extends JLabel implements Runnable {
             }
             else{
                 alpha=255;
+                setVisible(true);
                 while(alpha>0){
                     Thread.sleep(17);
                     alpha-=(float)255/60/speed;

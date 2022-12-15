@@ -9,6 +9,7 @@ public class PlayerGUI extends JPanel{
 	private JLabel[] cardLabels;
 	private ImageIcon preIcon;
 	private JLabel chipLabel;
+	private JLabelVanishing stateLabel;
 	private JPanel cardPanel;
 	private InstallFont fontFamily;
 	private int cardCnt = 0;
@@ -24,6 +25,13 @@ public class PlayerGUI extends JPanel{
 		chipLabel = new JLabel();
 		chipLabel.setFont(fontFamily.mediumFont(15f));
 		cardPanel.setOpaque(false);
+
+		nameLabel.setForeground(Color.WHITE);
+		chipLabel.setForeground(Color.WHITE);
+		stateLabel = new JLabelVanishing(this, true, 1);
+		stateLabel.setFont(fontFamily.boldFont(50f));
+		stateLabel.setHorizontalAlignment(JLabel.CENTER);
+		stateLabel.setForeground(Color.WHITE);
 		setOpaque(false);
 
 		fontFamily=new InstallFont();
@@ -32,7 +40,6 @@ public class PlayerGUI extends JPanel{
 	public void putCardImg(ImageIcon _img) {
 		cardLabels[++cardCnt-1] = new JLabel(_img);
 		cardPanel.add(cardLabels[cardCnt-1]);
-		repaint();
 	}
 	
 	public void sortCardPanel() {
@@ -68,7 +75,8 @@ public class PlayerGUI extends JPanel{
     		cardPanel.remove(cardLabels[i]);
     		cardLabels[i]=null;
     	}
-    	repaint();
+		getStateLabel().setAppear(false);
+		new Thread(getStateLabel()).start();
     	cardCnt=0;
     }
 
@@ -82,6 +90,7 @@ public class PlayerGUI extends JPanel{
 	public JLabel[] getCardLabels() {
 		return cardLabels;
 	}
+	public JLabelVanishing getStateLabel(){return stateLabel;}
 	public JLabel getChipLabel() {
 		return chipLabel;
 	}
